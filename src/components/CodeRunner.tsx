@@ -17,7 +17,7 @@ export const CodeRunner: React.FC = () => {
     try {
       const executionResult = await executeCode(
         currentFile.content,
-        currentFile.language,
+        currentFile.language as any,
       );
       setResult(executionResult);
     } catch (error) {

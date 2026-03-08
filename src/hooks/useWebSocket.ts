@@ -8,7 +8,6 @@ export const useWebSocket = (sessionId: string) => {
     updateFile,
     addFile,
     deleteFile,
-    setActiveFile,
     addUser,
     removeUser,
     setConnectionStatus,

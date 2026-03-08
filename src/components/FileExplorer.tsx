@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { useSessionStore } from "../stores/sessionStore";
-import { detectLanguage, getFileExtension } from "../utils/languages";
 import { LANGUAGE_CONFIGS } from "../utils/languages";
-import { VALIDATION_ERRORS } from "../utils/validation";
 
 export const FileExplorer: React.FC = () => {
   const { session, addFile, deleteFile, setActiveFile, currentFile } =
@@ -74,7 +72,8 @@ export const FileExplorer: React.FC = () => {
       <div className="flex-1 overflow-y-auto custom-scrollbar">
         {session.files.map((file) => {
           const isActive = currentFile?.id === file.id;
-          const config = LANGUAGE_CONFIGS[file.language];
+          const config =
+            LANGUAGE_CONFIGS[file.language as keyof typeof LANGUAGE_CONFIGS];
 
           return (
             <div

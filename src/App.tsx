@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Header } from "./components/Header";
 import { FileExplorer } from "./components/FileExplorer";
 import { CodeEditor } from "./components/CodeEditor";
@@ -8,7 +8,7 @@ import { useSessionStore } from "./stores/sessionStore";
 import { useSimpleShare } from "./hooks/useSimpleShare";
 
 function App() {
-  const { currentFile, createSession, addUser, setConnectionStatus, session } =
+  const { currentFile, createSession, addUser, setConnectionStatus } =
     useSessionStore();
 
   // Use simple sharing

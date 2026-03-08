@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import Editor from "@monaco-editor/react";
 import { File } from "../types";
 import { useSessionStore } from "../stores/sessionStore";
@@ -8,10 +8,7 @@ interface CodeEditorProps {
   height?: string;
 }
 
-export const CodeEditor: React.FC<CodeEditorProps> = ({
-  file,
-  height = "400px",
-}) => {
+export const CodeEditor: React.FC<CodeEditorProps> = ({ file }) => {
   const editorRef = useRef<any>(null);
   const updateFile = useSessionStore((state) => state.updateFile);
 

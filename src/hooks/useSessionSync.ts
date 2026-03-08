@@ -1,26 +1,26 @@
-import { useEffect } from 'react';
-import { useSessionStore } from '../stores/sessionStore';
+import { useEffect } from "react";
+import { useSessionStore } from "../stores/sessionStore";
 
 // Simple session synchronization using localStorage for demo
 export const useSessionSync = () => {
-  const { session, updateFile, addFile, deleteFile, setActiveFile } = useSessionStore();
+  const { session, updateFile, addFile } = useSessionStore();
 
   useEffect(() => {
     // Check for session ID in URL
     const urlParams = new URLSearchParams(window.location.search);
-    const sessionId = urlParams.get('session');
-    
+    const sessionId = urlParams.get("session");
+
     if (sessionId) {
       // Load session data from localStorage
       const storedSession = localStorage.getItem(`session-${sessionId}`);
       if (storedSession) {
         try {
           const sessionData = JSON.parse(storedSession);
-          console.log('Loading session from storage:', sessionData);
-          
+          console.log("Loading session from storage:", sessionData);
+
           // Sync files from storage
           sessionData.files?.forEach((file: any) => {
-            const existingFile = session.files.find(f => f.id === file.id);
+            const existingFile = session.files.find((f) => f.id === file.id);
             if (existingFile) {
               updateFile(file.id, file.content);
             } else {
@@ -28,7 +28,7 @@ export const useSessionSync = () => {
             }
           });
         } catch (error) {
-          console.error('Failed to load session:', error);
+          console.error("Failed to load session:", error);
         }
       }
     }
@@ -37,8 +37,8 @@ export const useSessionSync = () => {
   useEffect(() => {
     // Save session changes to localStorage
     const urlParams = new URLSearchParams(window.location.search);
-    const sessionId = urlParams.get('session') || session.id;
-    
+    const sessionId = urlParams.get("session") || session.id;
+
     // Debounce save to avoid excessive writes
     const timeoutId = setTimeout(() => {
       const sessionData = {
@@ -46,11 +46,11 @@ export const useSessionSync = () => {
         name: session.name,
         files: session.files,
         activeFileId: session.activeFileId,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
-      
+
       localStorage.setItem(`session-${sessionId}`, JSON.stringify(sessionData));
-      console.log('Saved session to storage:', sessionData);
+      console.log("Saved session to storage:", sessionData);
     }, 500);
 
     return () => clearTimeout(timeoutId);
@@ -59,24 +59,27 @@ export const useSessionSync = () => {
   // Function to simulate real-time updates (polling localStorage)
   const startPolling = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const sessionId = urlParams.get('session') || session.id;
-    
+    const sessionId = urlParams.get("session") || session.id;
+
     const pollInterval = setInterval(() => {
       const storedSession = localStorage.getItem(`session-${sessionId}`);
       if (storedSession) {
         try {
           const sessionData = JSON.parse(storedSession);
-          
+
           // Check if files have been updated by another tab
           sessionData.files?.forEach((file: any) => {
-            const existingFile = session.files.find(f => f.id === file.id);
+            const existingFile = session.files.find((f) => f.id === file.id);
             if (existingFile && existingFile.content !== file.content) {
-              console.log('Detected external change, updating file:', file.name);
+              console.log(
+                "Detected external change, updating file:",
+                file.name,
+              );
               updateFile(file.id, file.content);
             }
           });
         } catch (error) {
-          console.error('Polling error:', error);
+          console.error("Polling error:", error);
         }
       }
     }, 1000); // Poll every second
