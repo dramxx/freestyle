@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test CodeCollab Sharing</title>
+</head>
+<body>
+    <h1>CodeCollab Sharing Test</h1>
+    
+    <div>
+        <h2>Step 1: Create Session</h2>
+        <button onclick="createSession()">Create New Session</button>
+        <div id="session-id"></div>
+    </div>
+    
+    <div>
+        <h2>Step 2: Edit Content</h2>
+        <textarea id="content" rows="5" cols="50" onchange="saveContent()">console.log("Hello, World!");</textarea>
+        <button onclick="saveContent()">Save Content</button>
+    </div>
+    
+    <div>
+        <h2>Step 3: Share Link</h2>
+        <button onclick="generateShareLink()">Generate Share Link</button>
+        <div id="share-link"></div>
+    </div>
+    
+    <div>
+        <h2>Step 4: Load Shared Session</h2>
+        <input type="text" id="session-input" placeholder="Enter session ID">
+        <button onclick="loadSession()">Load Session</button>
+        <div id="loaded-content"></div>
+    </div>
+
+    <script>
+        let currentSessionId = null;
+        
+        async function createSession() {
+            currentSessionId = 'test-' + Math.random().toString(36).substr(2, 9);
+            document.getElementById('session-id').textContent = 'Session ID: ' + currentSessionId;
+            
+            // Save initial content
+            await saveContent();
+        }
+        
+        async function saveContent() {
+            if (!currentSessionId) {
+                alert('Please create a session first');
+                return;
+            }
+            
+            const content = document.getElementById('content').value;
+            const sessionData = {
+                id: currentSessionId,
+                name: 'Test Session',
+                files: [{
+                    id: 'file1',
+                    name: 'test.js',
+                    content: content
+                }]
+            };
+            
+            try {
+                const response = await fetch(`http://localhost:3002/api/sessions/${currentSessionId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(sessionData)
+                });
+                
+                const result = await response.json();
+                console.log('Saved:', result);
+                alert('Content saved!');
+            } catch (error) {
+                console.error('Save error:', error);
+                alert('Save failed: ' + error.message);
+            }
+        }
+        
+        function generateShareLink() {
+            if (!currentSessionId) {
+                alert('Please create a session first');
+                return;
+            }
+            
+            const shareUrl = `http://localhost:3000?session=${currentSessionId}`;
+            document.getElementById('share-link').innerHTML = 
+                `<a href="${shareUrl}" target="_blank">${shareUrl}</a>`;
+        }
+        
+        async function loadSession() {
+            const sessionId = document.getElementById('session-input').value;
+            if (!sessionId) {
+                alert('Please enter a session ID');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:3002/api/sessions/${sessionId}`);
+                if (!response.ok) {
+                    throw new Error('Session not found');
+                }
+                
+                const sessionData = await response.json();
+                console.log('Loaded:', sessionData);
+                
+                if (sessionData.files && sessionData.files.length > 0) {
+                    const content = sessionData.files[0].content;
+                    document.getElementById('loaded-content').innerHTML = 
+                        `<h3>Loaded Content:</h3><pre>${content}</pre>`;
+                    alert('Session loaded successfully!');
+                }
+            } catch (error) {
+                console.error('Load error:', error);
+                alert('Load failed: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
