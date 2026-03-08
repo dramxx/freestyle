@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/codecollab/", // Replace with your repo name
+  base: "/freestyle/", // Your repo name
   build: {
     outDir: "docs",
   },
